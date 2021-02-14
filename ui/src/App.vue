@@ -3,7 +3,7 @@
     <md-app md-waterfall md-mode="fixed" md-alignment="centered" class="md-app">
       <md-app-toolbar class="md-primary">
         <md-tabs class="md-primary" md-sync-route>
-          <md-tab to="/clients" md-label="Клиенты" exact></md-tab>
+          <md-tab to="/clients" md-label="Клиенты"></md-tab>
           <md-tab to="/kkm" md-label="ККМ и клиенты" exact></md-tab>
           <md-tab to="/kkm/models" md-label="Модели ККМ" exact></md-tab>
         </md-tabs>
@@ -17,19 +17,33 @@
 
 <script>
 import g from "guark"
+import {mapActions} from 'vuex';
 
 export default {
   name: "App",
-
-  components: {},
-
+  data() {
+    return {
+      isLoading: false,
+    };
+  },
   created() {
+    this.isLoading = true;
+
     g.env().then(env => {
       // Disable right click menu on production, you can implement your own!
       if (!!env.dev_mode) {
         document.addEventListener('contextmenu', e => e.preventDefault());
       }
     })
+
+    Promise.allSettled([
+      this.fetchKkmList(),
+      this.fetchClientList(),
+      this.fetchKkmModelsList(),
+    ]).then(() => this.isLoading = false);
+  },
+  methods: {
+    ...mapActions(["fetchClientList", "fetchKkmList", "fetchKkmModelsList"]),
   },
 }
 </script>
