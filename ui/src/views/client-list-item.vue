@@ -1,69 +1,73 @@
 <template>
-  <div v-if="action !== 'view'">
-    <form novalidate class="md-layout" @submit.prevent="validateClient">
-      <md-card class="md-layout-item md-size-50 md-small-size-100">
-        <md-card-header>
-          <div class="md-title">{{ headerText }} клиента</div>
-        </md-card-header>
+  <div class="md-layout">
+    <div v-if="action !== 'view'" class="md-layout-item">
+      <form novalidate class="md-layout md-alignment-top-center" @submit.prevent="validateClient">
+        <md-card class="md-layout-item md-size-50 md-small-size-100">
+          <md-card-header>
+            <div class="md-title">{{ headerText }} клиента</div>
+          </md-card-header>
 
-        <md-progress-bar md-mode="indeterminate" v-if="isPending"/>
+          <md-progress-bar md-mode="indeterminate" v-if="isPending"/>
 
-        <md-card-content>
-          <div class="md-layout md-gutter">
-            <div class="md-layout-item md-small-size-100" v-if="action !== 'create'">
-              <md-field>
-                <label for="id">ID</label>
-                <md-input name="id" id="id" autocomplete="off" v-model="localItem.id" readonly/>
-              </md-field>
+          <md-card-content>
+            <div class="md-layout md-gutter">
+              <div class="md-layout-item md-small-size-100" v-if="action !== 'create'">
+                <md-field>
+                  <label for="id">ID</label>
+                  <md-input name="id" id="id" autocomplete="off" v-model="localItem.id" readonly/>
+                </md-field>
+              </div>
+
+              <div class="md-layout-item md-small-size-100">
+                <md-field :class="getValidationClass('name')">
+                  <label for="name">Имя</label>
+                  <md-input name="name" id="name" autocomplete="off" v-model="localItem.name" :disabled="isPending"/>
+                  <span class="md-error" v-if="!$v.localItem.name.required">Имя должно быть заполнено</span>
+                </md-field>
+              </div>
             </div>
+          </md-card-content>
 
-            <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('name')">
-                <label for="name">Имя</label>
-                <md-input name="name" id="name" autocomplete="off" v-model="localItem.name" :disabled="isPending"/>
-                <span class="md-error" v-if="!$v.localItem.name.required">Имя должно быть заполнено</span>
-              </md-field>
+          <md-card-actions>
+            <md-button type="submit" class="md-primary" :disabled="isPending">{{ actionButtonText }}</md-button>
+            <md-button type="reset" :disabled="isPending" @click="onCancel">Отмена</md-button>
+          </md-card-actions>
+        </md-card>
+
+        <md-snackbar :md-active="formState !== null">{{ resultText }}</md-snackbar>
+      </form>
+    </div>
+    <div v-else class="md-layout-item">
+      <form novalidate class="md-layout md-alignment-top-center" @submit.prevent="validateClient">
+        <md-card class="md-layout-item md-size-50 md-small-size-100">
+          <md-card-header>
+            <div class="md-title">{{ headerText }} клиента</div>
+          </md-card-header>
+
+          <md-card-content>
+            <div class="md-layout md-gutter">
+              <div class="md-layout-item md-small-size-100" v-if="action !== 'create'">
+                <md-field>
+                  <label for="id-view">ID</label>
+                  <md-input name="id" id="id-view" autocomplete="off" v-model="localItem.id" readonly/>
+                </md-field>
+              </div>
+
+              <div class="md-layout-item md-small-size-100">
+                <md-field>
+                  <label for="name-view">Имя</label>
+                  <md-input name="name" id="name-view" autocomplete="off" v-model="localItem.name" readonly/>
+                </md-field>
+              </div>
             </div>
-          </div>
-        </md-card-content>
+          </md-card-content>
 
-        <md-card-actions>
-          <md-button type="submit" class="md-primary" :disabled="isPending">{{ actionButtonText }}</md-button>
-          <md-button type="reset" :disabled="isPending" @click="onCancel">Отмена</md-button>
-        </md-card-actions>
-      </md-card>
-
-      <md-snackbar :md-active="formState !== null">{{ resultText }}</md-snackbar>
-    </form>
-  </div>
-  <div v-else>
-    <md-card class="md-layout-item md-size-50 md-small-size-100">
-      <md-card-header>
-        <div class="md-title">{{ headerText }} клиента</div>
-      </md-card-header>
-
-      <md-card-content>
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100" v-if="action !== 'create'">
-            <md-field>
-              <label for="id-view">ID</label>
-              <md-input name="id" id="id-view" autocomplete="off" v-model="localItem.id" readonly/>
-            </md-field>
-          </div>
-
-          <div class="md-layout-item md-small-size-100">
-            <md-field>
-              <label for="name-view">Имя</label>
-              <md-input name="name" id="name-view" autocomplete="off" v-model="localItem.name" readonly/>
-            </md-field>
-          </div>
-        </div>
-      </md-card-content>
-
-      <md-card-actions>
-        <md-button :disabled="isPending" @click="onCancel">Закрыть</md-button>
-      </md-card-actions>
-    </md-card>
+          <md-card-actions>
+            <md-button :disabled="isPending" @click="onCancel">Закрыть</md-button>
+          </md-card-actions>
+        </md-card>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -110,7 +114,7 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
+    $route() {
       this.initView();
     }
   },
