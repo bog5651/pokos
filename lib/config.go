@@ -1,18 +1,19 @@
 package lib
 
 import (
+	"pokos/lib/funcs"
+	"pokos/lib/hooks"
+
 	"github.com/guark/guark/app"
 	"github.com/guark/plugins/clipboard"
 	"github.com/guark/plugins/dialog"
 	"github.com/guark/plugins/notify"
-	"pokos/lib/funcs"
-	"pokos/lib/hooks"
 )
 
 // Exposed functions to guark Javascript api.
 var Funcs = app.Funcs{
-	"getKKM": funcs.GetKKM,
-	"getClients": funcs.GetClients,
+	"getKKM":       funcs.GetKKM,
+	"getClients":   funcs.GetClients,
 	"GetModelsKKM": funcs.GetModelsKKM,
 }
 

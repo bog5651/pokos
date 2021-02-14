@@ -9,6 +9,7 @@
 			<button class="btn" @click="info()">Call Plugin Dialog info!</button>
 			<button class="btn" @click="notify()">Call Plugin Notify!</button>
 			<button class="btn" @click="select()">Call Plugin Dialog Select file!</button>
+      <textarea v-model="data"/>
 		</div>
 		<div style="padding: 10px;color: rgba(0, 0, 0, 0.5)">
 			AppName: {{ env.app_name }}, DevMode: {{ env.dev_mode }}, Version: {{ env.app_version }}
@@ -31,6 +32,7 @@ export default
 	{
 		return {
 			env: {},
+      data: "",
 		}
 	},
 
@@ -43,10 +45,10 @@ export default
 	{
 		async gcall()
 		{
-			// You can await too.
-			var hello_data = await g.call("hello_world", { name: "Guark working?" })
-
-			console.log(`hello_world call return data: ${hello_data}`)
+      this.data = JSON.stringify(await g.call("getKKM"))
+      this.data += JSON.stringify(await g.call("getClients"))
+      this.data += JSON.stringify(await g.call("GetModelsKKM"))
+      console.log(`hello_world call return data: ${this.data}`)
 		},
 
 		clipboardWrite()
