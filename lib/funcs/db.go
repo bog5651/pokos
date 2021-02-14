@@ -1,8 +1,12 @@
 package funcs
 
 import (
+	"database/sql"
+	"errors"
+	"fmt"
 	"pokos/lib/database"
 	"pokos/lib/types"
+	"pokos/lib/utils"
 
 	"github.com/guark/guark/app"
 )
@@ -100,7 +104,8 @@ func GetClients(c app.Context) (interface{}, error) {
 	return clients, nil
 }
 
-func GetModelsKKM(c app.Context) (interface{}, error) {db, err := database.GetInstance()
+func GetModelsKKM(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
 	if err != nil {
 		return nil, err
 	}
@@ -125,4 +130,156 @@ func GetModelsKKM(c app.Context) (interface{}, error) {db, err := database.GetIn
 		models = append(models, model)
 	}
 	return models, nil
+}
+
+func EditKKM(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	kkm := c.Get("kkm").(types.KKM)
+	_, err = db.Exec(`
+		UPDATE kkm_registers 
+		SET client_id = ?, cash_desk_id = ?, serial_number = ?, register_date = ?, ofd = ?, isExcise = ?, system_no = ?, type = ?, fn = ?, address = ?, end_date_fn = ?, end_date_ofd = ?, inspection_day_count = ?, comment = ?
+		WHERE id = ?`,
+		kkm.ClientId,
+		kkm.SerialNumber,
+		kkm.RegisterDate,
+		kkm.OFD,
+		kkm.IsExcise,
+		kkm.SystemNO,
+		kkm.Type,
+		kkm.FN,
+		kkm.Address,
+		kkm.EndDateFN,
+		kkm.EndDateOFD,
+		kkm.InspectionDayCount,
+		kkm.Comment,
+		kkm.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return "OK", nil
+}
+
+func EditClient(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	client := c.Get("client").(types.Client)
+	_, err = db.Exec(`
+		UPDATE clients SET name =? WHERE id = ?`,
+		client.Name,
+		client.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return "OK", nil
+}
+
+func EditModelKKM(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	model := c.Get("modelKkm").(types.ModelKKM)
+	_, err = db.Exec(`
+		UPDATE cash_desk SET name =? WHERE id = ?`,
+		model.Name,
+		model.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return "OK", nil
+}
+
+func DeleteKKM(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	id := c.Get("id").(int64)
+	_, err = db.Exec(`DELETE FROM kkm_registers WHERE id = ?`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return "OK", nil
+}
+
+func DeleteClient(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	id := c.Get("id").(int64)
+
+	rows, err := db.Query(`SELECT id FROM kkm_registers WHERE client_id = ?`, id)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		return nil, err
+	}
+	if !errors.Is(sql.ErrNoRows, err){
+		kkmListIds := make([]int64, 0)
+		for rows.Next() {
+			var id int64
+			err := rows.Scan(&id)
+			if err != nil {
+				return nil, fmt.Errorf("Удаление запрещено. Есть Регистрации ККМ. Ошибка получения списка ID")
+			}
+			kkmListIds = append(kkmListIds, id)
+		}
+		return nil, fmt.Errorf("Удаление запрещено. Есть Регистрации ККМ cо следующими ID - %s", utils.IntJoin(kkmListIds, ", "))
+	}
+
+	_, err = db.Exec(`DELETE FROM clients WHERE id = ?`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return "OK", nil
+}
+
+func DeleteModelKKM(c app.Context) (interface{}, error) {
+	db, err := database.GetInstance()
+	if err != nil {
+		return nil, err
+	}
+
+	id := c.Get("id").(int64)
+
+	rows, err := db.Query(`SELECT id FROM kkm_registers WHERE cash_desk_id = ?`, id)
+	if err != nil && !errors.Is(sql.ErrNoRows, err) {
+		return nil, err
+	}
+	if !errors.Is(sql.ErrNoRows, err){
+		kkmListIds := make([]int64, 0)
+		for rows.Next() {
+			var id int64
+			err := rows.Scan(&id)
+			if err != nil {
+				return nil, fmt.Errorf("Удаление запрещено. Есть Регистрации ККМ. Ошибка получения списка ID")
+			}
+			kkmListIds = append(kkmListIds, id)
+		}
+		return nil, fmt.Errorf("Удаление запрещено. Есть Регистрации ККМ cо следующими ID - %s", utils.IntJoin(kkmListIds, ", "))
+	}
+
+	_, err = db.Exec(`DELETE FROM cash_desk WHERE id = ?`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return "OK", nil
 }
