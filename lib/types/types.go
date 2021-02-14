@@ -1,7 +1,7 @@
 package types
 
 type KKM struct {
-	ID int64 `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -11,6 +11,6 @@ type Client struct {
 }
 
 type ModelKKM struct {
-	ID int64 `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }

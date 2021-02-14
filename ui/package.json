@@ -9,7 +9,10 @@
 	"dependencies": {
 		"core-js": "^3.6.5",
 		"guark": "^0.1.0",
+		"prettier": "^2.2.1",
 		"vue": "^2.6.11",
+		"vue-material": "^1.0.0-beta-15",
+		"vue-router": "^3.5.1",
 		"vuex": "^3.4.0"
 	},
 	"devDependencies": {
