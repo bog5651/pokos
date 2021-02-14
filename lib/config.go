@@ -11,7 +11,9 @@ import (
 
 // Exposed functions to guark Javascript api.
 var Funcs = app.Funcs{
-	"hello_world": funcs.HelloWorld,
+	"getKKM": funcs.GetKKM,
+	"getClients": funcs.GetClients,
+	"GetModelsKKM": funcs.GetModelsKKM,
 }
 
 // App hooks.
