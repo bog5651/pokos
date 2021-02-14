@@ -14,7 +14,7 @@ import (
 var Funcs = app.Funcs{
 	"getKKM":       funcs.GetKKM,
 	"getClients":   funcs.GetClients,
-	"GetModelsKKM": funcs.GetModelsKKM,
+	"getModelsKKM": funcs.GetModelsKKM,
 }
 
 // App hooks.

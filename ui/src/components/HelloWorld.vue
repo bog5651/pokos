@@ -47,7 +47,7 @@ export default
 		{
       this.data = JSON.stringify(await g.call("getKKM"))
       this.data += JSON.stringify(await g.call("getClients"))
-      this.data += JSON.stringify(await g.call("GetModelsKKM"))
+      this.data += JSON.stringify(await g.call("getModelsKKM"))
       console.log(`hello_world call return data: ${this.data}`)
 		},
 
