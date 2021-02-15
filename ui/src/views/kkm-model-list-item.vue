@@ -4,7 +4,7 @@
       <form novalidate class="md-layout md-alignment-top-center" @submit.prevent="validateListItem">
         <md-card class="md-layout-item md-size-50 md-small-size-100">
           <md-card-header>
-            <div class="md-title">{{ headerText }} клиента</div>
+            <div class="md-title">{{ headerText }} модели ККМ</div>
           </md-card-header>
 
           <md-progress-bar md-mode="indeterminate" v-if="isPending"/>
@@ -20,10 +20,10 @@
 
               <div class="md-layout-item md-small-size-100">
                 <md-field :class="getValidationClass('name')">
-                  <label for="name">Имя</label>
+                  <label for="name">Название</label>
                   <md-input name="name" id="name" autocomplete="off" v-model="localItem.name" :disabled="isPending"
                             :readonly="['view', 'delete'].includes(action)" required/>
-                  <span class="md-error" v-if="!$v.localItem.name.required">Имя должно быть заполнено</span>
+                  <span class="md-error" v-if="!$v.localItem.name.required">Название должно быть заполнено</span>
                 </md-field>
               </div>
             </div>
@@ -48,7 +48,7 @@ import {required,} from 'vuelidate/lib/validators';
 import {validationMixin} from "vuelidate";
 
 export default {
-  name: "ClientListItem",
+  name: "KkmModelListItem",
   mixins: [formTextMixin, validationMixin],
   data() {
     return {
@@ -78,9 +78,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(["isClientListLoading"]),
+    ...mapState(["isKkmListLoading"]),
     isPending() {
-      return this.isClientListLoading || this.formState === "pending";
+      return this.isKkmListLoading || this.formState === "pending";
     }
   },
   watch: {
@@ -92,7 +92,7 @@ export default {
     this.initView();
   },
   methods: {
-    ...mapActions(["upsertClient", "deleteClient"]),
+    ...mapActions(["upsertKkmModel", "deleteKkmModel"]),
     initView() {
       this.formState = null;
       this.resultText = '';
@@ -106,7 +106,7 @@ export default {
         return;
       }
 
-      this.localItem = this.$store.getters.clientListItem(this.id);
+      this.localItem = this.$store.getters.kkmModelListItem(this.id);
     },
     async onComplete() {
       this.formState = 'pending';
@@ -116,17 +116,17 @@ export default {
 
       switch (this.action) {
         case "create":
-          fn = () => this.upsertClient({shouldCreate: true, name: this.localItem.name});
-          messageTail = "создан"
+          fn = () => this.upsertKkmModel({shouldCreate: true, name: this.localItem.name});
+          messageTail = "создана"
           break;
         case "delete":
-          fn = () => this.deleteClient({id: this.id});
-          messageTail = "удалён"
+          fn = () => this.deleteKkmModel({id: this.id});
+          messageTail = "удалена"
           break;
         case "update":
         default:
-          fn = () => this.upsertClient({shouldCreate: false, id: this.id, name: this.localItem.name})
-          messageTail = "обновлён"
+          fn = () => this.upsertKkmModel({shouldCreate: false, id: this.id, name: this.localItem.name})
+          messageTail = "обновлена"
       }
 
       const result = await fn();
@@ -138,7 +138,7 @@ export default {
       }
 
       this.formState = 'success';
-      this.resultText = `Клиент ID=${result.id} успешно ${messageTail}`;
+      this.resultText = `Модель ККМ ID=${result.id} успешно ${messageTail}`;
     },
     onCancel() {
       this.$router.back();
@@ -153,6 +153,10 @@ export default {
       }
     },
     validateListItem() {
+      if (this.action === 'view') {
+        return;
+      }
+
       this.$v.$touch()
 
       if (!this.$v.$invalid) {

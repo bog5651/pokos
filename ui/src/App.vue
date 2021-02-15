@@ -26,15 +26,19 @@ export default {
       isLoading: false,
     };
   },
+  beforeCreate() {
+    this.$material.locale.dateFormat = "dd/MM/yyyy";
+    this.$material.locale.firstDayOfAWeek = 1;
+  },
   created() {
     this.isLoading = true;
 
-    g.env().then(env => {
-      // Disable right click menu on production, you can implement your own!
-      if (!!env.dev_mode) {
-        document.addEventListener('contextmenu', e => e.preventDefault());
-      }
-    })
+    // g.env().then(env => {
+    //   // Disable right click menu on production, you can implement your own!
+    //   if (!!env.dev_mode) {
+    //     document.addEventListener('contextmenu', e => e.preventDefault());
+    //   }
+    // })
 
     Promise.allSettled([
       this.fetchKkmList(),
@@ -49,6 +53,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+body {
+  overflow: hidden !important;
+}
+
 body, html {
   width: 100%;
   height: 100%;
@@ -95,5 +104,8 @@ input {
 .md-app {
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow: hidden;
 }
 </style>

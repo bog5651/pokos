@@ -67,7 +67,7 @@ export default {
       commit("upsertClientList", client);
       commit("setIsClientListLoading", false);
 
-      return client.id;
+      return client;
     } catch (e) {
       console.debug("upsertClient", e);
       commit("setClientListError", e.message ? e.message : e);
@@ -80,9 +80,6 @@ export default {
     try {
       commit("setIsClientListLoading", true);
 
-      await new Promise((resolve) => {
-        setInterval(() => resolve(1), 1500);
-      });
       await g.call("deleteClient", { id: id });
 
       commit("removeClientListItem", id);
@@ -93,6 +90,48 @@ export default {
       console.debug("deleteClient", e);
       commit("setClientListError", e.message ? e.message : e);
       commit("setIsClientListLoading", false);
+
+      return null;
+    }
+  },
+  async upsertKkmModel({ commit }, { shouldCreate, id, name }) {
+    try {
+      commit("setIsKkmModelListLoading", true);
+
+      let client;
+
+      if (shouldCreate) {
+        client = await g.call("createKkmModel", { name: name });
+      } else {
+        client = await g.call("updateKkmModel", { id: id, name: name });
+      }
+
+      commit("upsertKkmModelList", client);
+      commit("setIsKkmModelListLoading", false);
+
+      return client;
+    } catch (e) {
+      console.debug("upsertKkmModel", e);
+      commit("setKkmModelListError", e.message ? e.message : e);
+      commit("setIsKkmModelListLoading", false);
+
+      return null;
+    }
+  },
+  async deleteKkmModel({ commit }, { id }) {
+    try {
+      commit("setIsKkmModelListLoading", true);
+
+      await g.call("deleteKkmModel", { id: id });
+
+      commit("removeKkmModelListItem", id);
+      commit("setIsClientListLoading", false);
+
+      return true;
+    } catch (e) {
+      console.debug("deleteKkmModel", e);
+      commit("setKkmModelListError", e.message ? e.message : e);
+      commit("setIsKkmModelListLoading", false);
 
       return null;
     }

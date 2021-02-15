@@ -16,7 +16,7 @@
       <md-table-empty-state
           md-label="Не найдено"
           :md-description="emptyStateDescription">
-        <md-button class="md-primary md-raised">Создать клиента</md-button>
+        <md-button class="md-primary md-raised" @click="openAddForm">Создать клиента</md-button>
       </md-table-empty-state>
       <md-table-row slot="md-table-row" slot-scope="{ item }" :md-id="item.id">
         <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>

@@ -11,6 +11,8 @@ import KKMList from "./views/kkm-list.vue";
 import KKMModelList from "./views/kkm-model-list.vue";
 import ClientList from "./views/client-list.vue";
 import ClientListItem from "./views/client-list-item";
+import KKMModelListItem from "./views/kkm-model-list-item";
+import KKMListItem from "./views/kkm-list-item";
 import ErrorPage from "./views/error-page";
 
 Vue.config.productionTip = false;
@@ -25,47 +27,47 @@ const router = new VueRouter({
       name: "kkm-list",
       component: KKMList,
     },
-    // {
-    //   path: "/kkm/create",
-    //   name: "kkm-list-item-create",
-    //   component: KKMListItem,
-    //   props: {
-    //     action: "create",
-    //     id: -1,
-    //   },
-    // },
-    // {
-    //   path: "/kkm/:id/:action",
-    //   name: "kkm-list-item",
-    //   component: KKMListItem,
-    //   props: (route) => ({
-    //     action: route.params.action,
-    //     id: +route.params.id,
-    //   }),
-    // },
+    {
+      path: "/kkm/create",
+      name: "kkm-list-item-create",
+      component: KKMListItem,
+      props: {
+        action: "create",
+        id: -1,
+      },
+    },
+    {
+      path: "/kkm/:id/:action",
+      name: "kkm-list-item",
+      component: KKMListItem,
+      props: (route) => ({
+        action: route.params.action,
+        id: +route.params.id,
+      }),
+    },
     {
       path: "/kkm/models",
-      name: "kkm-models-list",
+      name: "kkm-model-list",
       component: KKMModelList,
     },
-    // {
-    //   path: "/kkm/models/create",
-    //   name: "kkm-models-list-item-create",
-    //   component: KKMModelListItem,
-    //   props: {
-    //     action: "create",
-    //     id: -1,
-    //   },
-    // },
-    // {
-    //   path: "/kkm/models/:id/:action",
-    //   name: "kkm-models-list-item",
-    //   component: KKMModelListItem,
-    //   props: (route) => ({
-    //     action: route.params.action,
-    //     id: +route.params.id,
-    //   }),
-    // },
+    {
+      path: "/kkm/models/create",
+      name: "kkm-model-list-item-create",
+      component: KKMModelListItem,
+      props: {
+        action: "create",
+        id: -1,
+      },
+    },
+    {
+      path: "/kkm/models/:id/:action",
+      name: "kkm-model-list-item",
+      component: KKMModelListItem,
+      props: (route) => ({
+        action: route.params.action,
+        id: +route.params.id,
+      }),
+    },
     {
       path: "/clients",
       name: "clients-list",

@@ -8,4 +8,14 @@ export default {
   clientListError: null,
   kkmListError: null,
   kkmModelListError: null,
+  ofdList: [
+    "Такском",
+    "Первый ОФД",
+    "Калуга астра",
+    "Контур",
+    "Автономно",
+    "Петер сервис",
+  ],
+  noSystemList: ["ЕНВД", "УСН", "УСН доход-расход", "ОСН", "Патент", "ЕСХН"],
+  noTypeList: ["Услуги", "Торговля", "Услуги + торговля"],
 };
