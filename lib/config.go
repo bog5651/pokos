@@ -16,13 +16,17 @@ var Funcs = app.Funcs{
 	"getClients":   funcs.GetClients,
 	"getModelsKKM": funcs.GetModelsKKM,
 
-	"editClient":   funcs.EditClient,
-	"editKKM":      funcs.EditKKM,
-	"editModelKKM": funcs.EditModelKKM,
+	"updateClient":   funcs.UpdateClient,
+	"updateKKM":      funcs.UpdateKKM,
+	"updateModelKKM": funcs.UpdateModelKKM,
 
 	"deleteClient":   funcs.DeleteClient,
 	"deleteKKM":      funcs.DeleteKKM,
 	"deleteModelKKM": funcs.DeleteModelKKM,
+
+	"createKKM":      funcs.CreateKKM,
+	"createClient":   funcs.CreateClient,
+	"createModelKKM": funcs.CreateModelKKM,
 }
 
 // App hooks.

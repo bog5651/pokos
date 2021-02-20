@@ -6,7 +6,7 @@ export default {
     const idx = state.clientList.findIndex((c) => c.id === item.id);
 
     if (idx > -1) {
-      state.clientList = state.clientList.slice().splice(idx, 1, item);
+      state.clientList[idx] = item;
       return;
     }
 
@@ -16,7 +16,7 @@ export default {
     const idx = state.clientList.findIndex((i) => i.id === itemId);
 
     if (idx > -1) {
-      state.clientList = state.clientList.slice().splice(idx, 1);
+      state.clientList.splice(idx, 1);
     }
   },
   setKkmList(state, list) {
@@ -26,7 +26,7 @@ export default {
     const idx = state.kkmList.findIndex((k) => k.id === item.id);
 
     if (idx > -1) {
-      state.kkmList = state.kkmList.slice().splice(idx, 1, item);
+      state.kkmList[idx] = item;
       return;
     }
 
@@ -36,7 +36,7 @@ export default {
     const idx = state.kkmList.findIndex((i) => i.id === itemId);
 
     if (idx > -1) {
-      state.kkmList = state.kkmList.slice().splice(idx, 1);
+      state.kkmList.splice(idx, 1);
     }
   },
   setKkmModelList(state, list) {
@@ -46,7 +46,7 @@ export default {
     const idx = state.kkmModelList.findIndex((m) => m.id === item.id);
 
     if (idx > -1) {
-      state.kkmModelList = state.kkmModelList.slice().splice(idx, 1, item);
+      state.kkmModelList[idx] = item;
       return;
     }
 
@@ -56,7 +56,7 @@ export default {
     const idx = state.kkmModelList.findIndex((i) => i.id === itemId);
 
     if (idx > -1) {
-      state.kkmModelList = state.kkmModelList.slice().splice(idx, 1);
+      state.kkmModelList.splice(idx, 1);
     }
   },
   setIsClientListLoading(state, isLoading) {

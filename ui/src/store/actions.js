@@ -61,7 +61,7 @@ export default {
       if (shouldCreate) {
         client = await g.call("createClient", { name: name });
       } else {
-        client = await g.call("updateClient", { id: id, name: name });
+        client = await g.call("updateClient", { client: { id: id, name: name } });
       }
 
       commit("upsertClientList", client);
@@ -85,7 +85,7 @@ export default {
       commit("removeClientListItem", id);
       commit("setIsClientListLoading", false);
 
-      return true;
+      return { id: id };
     } catch (e) {
       console.debug("deleteClient", e);
       commit("setClientListError", e.message ? e.message : e);
@@ -101,9 +101,9 @@ export default {
       let client;
 
       if (shouldCreate) {
-        client = await g.call("createKkmModel", { name: name });
+        client = await g.call("createModelKKM", { name: name });
       } else {
-        client = await g.call("updateKkmModel", { id: id, name: name });
+        client = await g.call("updateModelKKM", { modelKkm: { id: id, name: name } });
       }
 
       commit("upsertKkmModelList", client);
@@ -122,12 +122,12 @@ export default {
     try {
       commit("setIsKkmModelListLoading", true);
 
-      await g.call("deleteKkmModel", { id: id });
+      await g.call("deleteModelKKM", { id: id });
 
       commit("removeKkmModelListItem", id);
       commit("setIsClientListLoading", false);
 
-      return true;
+      return { id: id };
     } catch (e) {
       console.debug("deleteKkmModel", e);
       commit("setKkmModelListError", e.message ? e.message : e);
