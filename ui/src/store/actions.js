@@ -136,4 +136,104 @@ export default {
       return null;
     }
   },
+  async deleteKkm({ commit }, { id }) {
+    try {
+      commit("setIsKkmListLoading", true);
+
+      await g.call("deleteKKM", { id: id });
+
+      commit("removeKkmListItem", id);
+      commit("setIsKkmListLoading", false);
+
+      return { id: id };
+    } catch (e) {
+      console.debug("deleteKKM", e);
+      commit("setKkmListError", e.message ? e.message : e);
+      commit("setIsKkmListLoading", false);
+
+      return null;
+    }
+  },
+  async upsertKkm({ commit }, {
+    shouldCreate,
+    id,
+    kkm: {
+      name,
+      clientId,
+      modelId,
+      serialNumber,
+      registerDate,
+      ofd,
+      isExcise,
+      systemNo,
+      type,
+      fn,
+      address,
+      endDateOfd,
+      endDateFn,
+      inspectionDayCount,
+      comment
+    }
+  }) {
+    try {
+      commit("setIsKkmListLoading", true);
+
+      let client;
+
+      if (shouldCreate) {
+        client = await g.call("createKKM", {
+          kkm: {
+            id: id,
+            name: name,
+            clientId: clientId,
+            modelId: modelId,
+            serialNumber: serialNumber,
+            registerDate: registerDate,
+            ofd: ofd,
+            isExcise: isExcise,
+            systemNo: systemNo,
+            type: type,
+            fn: Number(fn),
+            address: address,
+            endDateOfd: endDateOfd,
+            endDateFn: endDateFn,
+            inspectionDayCount: inspectionDayCount,
+            comment: comment
+          }
+        });
+      } else {
+        client = await g.call("updateKKM", {
+          kkm: {
+            id: id,
+            name: name,
+            clientId: clientId,
+            modelId: modelId,
+            serialNumber: serialNumber,
+            registerDate: registerDate,
+            ofd: ofd,
+            isExcise: isExcise,
+            systemNo: systemNo,
+            type: type,
+            fn: Number(fn),
+            address: address,
+            endDateOfd: endDateOfd,
+            endDateFn: endDateFn,
+            inspectionDayCount: inspectionDayCount,
+            comment: comment
+          }
+        });
+      }
+
+      commit("upsertKkmList", client);
+      commit("setIsKkmListLoading", false);
+
+      return client;
+    } catch (e) {
+      console.debug("upsertKkm", e);
+      commit("setKkmListError", e.message ? e.message : e);
+      commit("setIsKkmListLoading", false);
+
+      return null;
+    }
+  },
 };

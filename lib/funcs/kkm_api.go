@@ -2,6 +2,7 @@ package funcs
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/guark/guark/app"
 	"github.com/mitchellh/mapstructure"
 	"pokos/lib/database"
@@ -182,7 +183,14 @@ func CreateKKM(c app.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	kkm := c.Get("kkm").(types.KKM)
+	raw := c.Get("kkm")
+	var kkm types.KKM
+	err = mapstructure.Decode(raw, &kkm)
+	if err != nil {
+		return nil, err
+	}
+	c.App.Log.Error(fmt.Sprintf("got %+v", kkm))
+
 	insertInfo, err := db.Exec(`
 		INSERT INTO kkm_registers (client_id, cash_desk_id, serial_number, register_date, ofd, isExcise, system_no, type, fn, address, end_date_fn, end_date_ofd, inspection_day_count, comment) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		kkm.ClientId,
@@ -205,6 +213,7 @@ func CreateKKM(c app.Context) (interface{}, error) {
 	}
 
 	id, err := insertInfo.LastInsertId()
+	c.App.Log.Error(fmt.Sprintf("inserted id %d", id))
 	if err != nil {
 		return nil, err
 	}

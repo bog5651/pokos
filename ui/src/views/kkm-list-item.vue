@@ -23,7 +23,7 @@
                   <label for="client">Клиент</label>
                   <md-select name="client" id="client" v-model="localItem.clientId" :disabled="isPending"
                              :readonly="['view', 'delete'].includes(action)" required>
-<!--                    <md-option value="" disabled class="md-disabled">Выберите клиента</md-option>-->
+                    <!--                    <md-option value="" disabled class="md-disabled">Выберите клиента</md-option>-->
                     <md-option v-for="opt in clientList" :key="opt.id" :value="opt.id">{{ opt.name }}</md-option>
                   </md-select>
                   <span class="md-error" v-if="!$v.localItem.clientId.required">Клиент должен быть выбран</span>
@@ -35,7 +35,7 @@
                   <label for="model">Модель</label>
                   <md-select name="model" id="model" v-model="localItem.modelId" :disabled="isPending"
                              :readonly="['view', 'delete'].includes(action)">
-<!--                    <md-option value="" disabled class="md-disabled">Выберите модель</md-option>-->
+                    <!--                    <md-option value="" disabled class="md-disabled">Выберите модель</md-option>-->
                     <md-option v-for="opt in kkmModelList" :key="opt.id" :value="opt.id">{{ opt.name }}</md-option>
                   </md-select>
                   <span class="md-error" v-if="!$v.localItem.modelId.required">Модель должна быть выбрана</span>
@@ -67,7 +67,7 @@
                   <label for="ofd">ОФД</label>
                   <md-select name="ofd" id="ofd" v-model="localItem.ofd" :disabled="isPending"
                              :readonly="['view', 'delete'].includes(action)" required>
-<!--                    <md-option value="" disabled class="md-disabled">Выберите ОФД</md-option>-->
+                    <!--                    <md-option value="" disabled class="md-disabled">Выберите ОФД</md-option>-->
                     <md-option v-for="opt in ofdList" :key="opt" :value="opt">{{ opt }}</md-option>
                   </md-select>
                   <span class="md-error" v-if="!$v.localItem.ofd.required">ОФД должен быть выбран</span>
@@ -83,7 +83,7 @@
                   <label for="systemNo">Система НО</label>
                   <md-select name="systemNo" id="systemNo" v-model="localItem.systemNo" :disabled="isPending"
                              :readonly="['view', 'delete'].includes(action)" required>
-<!--                    <md-option value="" disabled class="md-disabled">Система НО</md-option>-->
+                    <!--                    <md-option value="" disabled class="md-disabled">Система НО</md-option>-->
                     <md-option v-for="opt in noSystemList" :key="opt" :value="opt">{{ opt }}</md-option>
                   </md-select>
                   <span class="md-error" v-if="!$v.localItem.systemNo.required">Система НО должна быть выбрана</span>
@@ -95,7 +95,7 @@
                   <label for="type">Тип НО</label>
                   <md-select name="type" id="type" v-model="localItem.type" :disabled="isPending"
                              :readonly="['view', 'delete'].includes(action)" required>
-<!--                    <md-option value="" disabled class="md-disabled">Тип НО</md-option>-->
+                    <!--                    <md-option value="" disabled class="md-disabled">Тип НО</md-option>-->
                     <md-option v-for="opt in noTypeList" :key="opt" :value="opt">{{ opt }}</md-option>
                   </md-select>
                   <span class="md-error" v-if="!$v.localItem.type.required">Тип НО должен быть выбран</span>
@@ -109,6 +109,7 @@
                             :disabled="isPending"
                             :readonly="['view', 'delete'].includes(action)"
                             required
+                            type="number"
                   />
                   <span class="md-error" v-if="!$v.localItem.fn.required">ФН должен быть заполнен</span>
                 </md-field>
@@ -156,8 +157,8 @@
                 <md-field :class="getValidationClass('comment')">
                   <label for="comment">Комментарий</label>
                   <md-textarea md-autogrow name="comment" id="comment" autocomplete="off" v-model="localItem.comment"
-                            :disabled="isPending"
-                            :readonly="['view', 'delete'].includes(action)"
+                               :disabled="isPending"
+                               :readonly="['view', 'delete'].includes(action)"
                   />
                 </md-field>
               </div>
@@ -179,7 +180,7 @@
 <script>
 import {mapActions, mapState} from "vuex";
 import formTextMixin from "@/mixins/formTextMixin";
-import {minValue, not, required, sameAs} from 'vuelidate/lib/validators';
+import {minValue, required} from 'vuelidate/lib/validators';
 import {isValidDate} from "@/validators/validators";
 import {validationMixin} from "vuelidate";
 import {format} from 'date-fns';
@@ -202,7 +203,7 @@ export default {
         isExcise: false,
         systemNo: '',
         type: '',
-        fn: '',
+        fn: 0,
         address: '',
         endDateOfd: templateDate,
         endDateFn: templateDate,
@@ -215,19 +216,19 @@ export default {
   },
   validations: {
     localItem: {
-      id: {required},
-      clientId: {required: minValue(0)},
-      modelId: {required: minValue(0)},
-      serialNumber: {required},
-      registerDate: {required, isValidDate},
-      ofd: {required},
+      id: { required },
+      clientId: { required: minValue(0) },
+      modelId: { required: minValue(0) },
+      serialNumber: { required },
+      registerDate: { required, isValidDate },
+      ofd: { required },
       isExcise: {}, // optional
-      systemNo: {required},
-      type: {required},
-      fn: {required},
-      address: {required},
-      endDateOfd: {required, isValidDate},
-      endDateFn: {required, isValidDate},
+      systemNo: { required },
+      type: { required },
+      fn: { required: minValue(0) },
+      address: { required },
+      endDateOfd: { required, isValidDate },
+      endDateFn: { required, isValidDate },
       inspectionDayCount: {}, // calculated
       comment: {}, // optional
     }
@@ -266,7 +267,7 @@ export default {
     this.initView();
   },
   methods: {
-    ...mapActions(["upsertKkmModel", "deleteKkmModel"]),
+    ...mapActions(["upsertKkm", "deleteKkm"]),
     initView() {
       this.formState = null;
       this.resultText = '';
@@ -285,7 +286,7 @@ export default {
           isExcise: false,
           systemNo: '',
           type: '',
-          fn: '',
+          fn: 0,
           address: '',
           endDateOfd: templateDate,
           endDateFn: templateDate,
@@ -306,16 +307,16 @@ export default {
 
       switch (this.action) {
         case "create":
-          fn = () => this.upsertKkmModel({shouldCreate: true, name: this.localItem.name});
+          fn = () => this.upsertKkm({ shouldCreate: true, kkm: this.localItem });
           messageTail = "создана"
           break;
         case "delete":
-          fn = () => this.deleteKkmModel({id: this.id});
+          fn = () => this.deleteKkm({ id: this.id });
           messageTail = "удалена"
           break;
         case "update":
         default:
-          fn = () => this.upsertKkmModel({shouldCreate: false, id: this.id, name: this.localItem.name})
+          fn = () => this.upsertKkm({ shouldCreate: false, id: this.id, kkm: this.localItem })
           messageTail = "обновлена"
       }
 
@@ -328,7 +329,7 @@ export default {
       }
 
       this.formState = 'success';
-      this.resultText = `Модель ККМ ID=${result.id} успешно ${messageTail}`;
+      this.resultText = `Модель ККМ ID=${ result.id } успешно ${ messageTail }`;
     },
     onCancel() {
       this.$router.back();
