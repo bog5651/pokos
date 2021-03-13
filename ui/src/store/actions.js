@@ -197,7 +197,7 @@ export default {
             address: address,
             endDateOfd: endDateOfd,
             endDateFn: endDateFn,
-            inspectionDayCount: inspectionDayCount,
+            inspectionDayCount: Number(inspectionDayCount),
             comment: comment
           }
         });
@@ -218,7 +218,7 @@ export default {
             address: address,
             endDateOfd: endDateOfd,
             endDateFn: endDateFn,
-            inspectionDayCount: inspectionDayCount,
+            inspectionDayCount: Number(inspectionDayCount),
             comment: comment
           }
         });

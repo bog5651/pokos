@@ -57,7 +57,7 @@
 
               <div class="md-layout-item md-small-size-100">
                 <md-datepicker v-model="localItem.registerDate" md-immediately md-open-on-focus
-                               required class="md-required">
+                               required class="md-required" :md-model-type="Number">
                   <label>Дата регистрации</label>
                 </md-datepicker>
               </div>
@@ -92,7 +92,7 @@
 
               <div class="md-layout-item md-small-size-100">
                 <md-field :class="getValidationClass('type')">
-                  <label for="type">Тип НО</label>
+                  <label for="type">Вид работ</label>
                   <md-select name="type" id="type" v-model="localItem.type" :disabled="isPending"
                              :readonly="['view', 'delete'].includes(action)" required>
                     <!--                    <md-option value="" disabled class="md-disabled">Тип НО</md-option>-->
@@ -127,21 +127,21 @@
                 </md-field>
               </div>
 
-              <div class="md-layout-item md-small-size-100">
+              <div class="md-layout-item md-small-size-100" v-if="!isOfdOffline()">
                 <md-datepicker v-model="localItem.endDateOfd" md-immediately md-open-on-focus
-                               required class="md-required">
+                               required class="md-required" :md-model-type="Number">
                   <label>Дата окончания ОФД</label>
                 </md-datepicker>
               </div>
 
               <div class="md-layout-item md-small-size-100">
                 <md-datepicker v-model="localItem.endDateFn" md-immediately md-open-on-focus
-                               required class="md-required">
+                               required class="md-required" :md-model-type="Number">
                   <label>Дата окончания ФН</label>
                 </md-datepicker>
               </div>
 
-              <div class="md-layout-item md-small-size-100" v-if="action === 'action'">
+              <div class="md-layout-item md-small-size-100">
                 <md-field :class="getValidationClass('inspectionDayCount')">
                   <label for="inspectionDayCount">Дней с момента ТО</label>
                   <md-input name="inspectionDayCount" id="inspectionDayCount" autocomplete="off"
@@ -183,13 +183,13 @@ import formTextMixin from "@/mixins/formTextMixin";
 import {minValue, required} from 'vuelidate/lib/validators';
 import {isValidDate} from "@/validators/validators";
 import {validationMixin} from "vuelidate";
-import {format} from 'date-fns';
+import {format, parse} from 'date-format-parse';
 
 export default {
   name: "KkmListItem",
   mixins: [formTextMixin, validationMixin],
   data() {
-    const dateFormat = this.$material.locale.dateFormat || 'yyyy-MM-dd';
+    const dateFormat = 'DD/MM/YYYY';
     const templateDate = format(new Date(), dateFormat);
 
     return {
@@ -229,7 +229,7 @@ export default {
       address: { required },
       endDateOfd: { required, isValidDate },
       endDateFn: { required, isValidDate },
-      inspectionDayCount: {}, // calculated
+      inspectionDayCount: {}, // optional
       comment: {}, // optional
     }
   },
@@ -247,33 +247,79 @@ export default {
     ...mapState(["isKkmListLoading", "noSystemList", "noTypeList", "clientList", "kkmModelList", "ofdList"]),
     isPending() {
       return this.isKkmListLoading || this.formState === "pending";
-    }
+    },
   },
   watch: {
     $route() {
       this.initView();
     },
-    localItem(newVal, oldVal) {
-      if (!oldVal) return;
+    'localItem.registerDate'() {
+      this.calculateFN();
+      this.calculateEndDateFN();
+    },
+    'localItem.ofd'() {
+      this.calculateFN();
+      this.calculateEndDateFN();
+    },
+    'localItem.systemNo'() {
+      this.calculateFN();
+      this.calculateEndDateFN();
+    },
+    'localItem.type'() {
+      this.calculateFN();
+      this.calculateEndDateFN();
+    },
+    'localItem.isExcise'() {
+      this.calculateFN();
+      this.calculateEndDateFN();
+    },
+    'localItem.fn'() {
+      this.calculateEndDateFN();
+    },
+    localItem (newVal, oldVal) {
+        if (!oldVal) return;
 
-      if (oldVal.clientId === newVal.clientId) {
-        return;
+        if (oldVal.clientId === newVal.clientId) {
+          return;
+        }
+
+        console.log('новое значение: %s, старое значение: %s', JSON.stringify(newVal), JSON.stringify(oldVal))
       }
-
-      console.log('changed:', newVal);
-    }
   },
   created() {
     this.initView();
   },
   methods: {
     ...mapActions(["upsertKkm", "deleteKkm"]),
+    calculateFN() {
+      let fn = 0;
+      if (this.localItem.isExcise || this.localItem.ofd === "Автономно")
+        fn = 410;
+      else if (this.localItem.systemNo === "ОСН")
+        fn = 470;
+      else
+        fn = 1110;
+
+      this.localItem = {...this.localItem, ...{
+          fn: fn,
+        }}
+    },
+    calculateEndDateFN() {
+      const date = parse(this.localItem.registerDate, 'DD/MM/YYYY');
+      date.setDate(date.getDate() + Number(this.localItem.fn));
+      this.localItem = {...this.localItem, ...{
+          endDateFn: format(date, 'DD/MM/YYYY'),
+        }}
+    },
+    isOfdOffline() {
+      return this.localItem.ofd === 'Автономно'
+    },
     initView() {
       this.formState = null;
       this.resultText = '';
 
       if (this.action === "create") {
-        const dateFormat = this.$material.locale.dateFormat || 'yyyy-MM-dd';
+        const dateFormat = 'DD/MM/YYYY';
         const templateDate = format(new Date(), dateFormat);
 
         this.localItem = {
@@ -305,9 +351,15 @@ export default {
       let fn;
       let messageTail;
 
+      const kkm = this.localItem
+
+      if(this.isOfdOffline) {
+        kkm.endDateOfd = ""
+      }
+
       switch (this.action) {
         case "create":
-          fn = () => this.upsertKkm({ shouldCreate: true, kkm: this.localItem });
+          fn = () => this.upsertKkm({ shouldCreate: true, kkm: kkm });
           messageTail = "создана"
           break;
         case "delete":
@@ -316,7 +368,7 @@ export default {
           break;
         case "update":
         default:
-          fn = () => this.upsertKkm({ shouldCreate: false, id: this.id, kkm: this.localItem })
+          fn = () => this.upsertKkm({ shouldCreate: false, id: this.id, kkm: kkm })
           messageTail = "обновлена"
       }
 

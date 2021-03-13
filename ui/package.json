@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "date-fns": "^2.17.0",
+    "date-format-parse": "^0.2.6",
     "fuzzy-search": "^3.2.1",
     "guark": "^0.1.0",
     "vue": "^2.6.11",
