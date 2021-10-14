@@ -1,7 +1,6 @@
 package funcs
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/guark/guark/app"
 	"github.com/mitchellh/mapstructure"
@@ -128,7 +127,7 @@ func DeleteKKM(c app.Context) (interface{}, error) {
 	return "OK", nil
 }
 
-func GetKKMByID(db *sql.DB, id int64) (types.KKM, error) {
+func GetKKMByID(db database.DbExecutor, id int64) (types.KKM, error) {
 	var KKM types.KKM
 
 	err := db.QueryRow(

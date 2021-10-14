@@ -3,6 +3,8 @@ module pokos
 go 1.15
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/guark/guark v0.1.1
 	github.com/guark/plugins v0.0.0-20201102173241-c94a1e1f818e
 	github.com/mattn/go-sqlite3 v1.14.6

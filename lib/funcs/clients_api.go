@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/guark/guark/app"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/mitchellh/mapstructure"
 	"pokos/lib/database"
 	"pokos/lib/types"
@@ -71,7 +72,6 @@ func DeleteClient(c app.Context) (interface{}, error) {
 	}
 
 	id := c.Get("id").(float64)
-
 	rows, err := db.Query(`SELECT id FROM kkm_registers WHERE client_id = ?`, int64(id))
 	if err != nil {
 		if !errors.Is(sql.ErrNoRows, err) {
@@ -100,7 +100,7 @@ func DeleteClient(c app.Context) (interface{}, error) {
 	return "OK", nil
 }
 
-func GetClientsByID(db *sql.DB, id int64) (types.Client, error) {
+func GetClientsByID(db database.DbExecutor, id int64) (types.Client, error) {
 	var client types.Client
 
 	err := db.QueryRow(`SELECT id, name FROM clients WHERE id = ? LIMIT 1;`, id).Scan(

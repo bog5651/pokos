@@ -99,7 +99,7 @@ func DeleteModelKKM(c app.Context) (interface{}, error) {
 	return "OK", nil
 }
 
-func GetModelsKKMByID(db *sql.DB, id int64) (types.ModelKKM, error) {
+func GetModelsKKMByID(db database.DbExecutor, id int64) (types.ModelKKM, error) {
 	var model types.ModelKKM
 
 	err := db.QueryRow(`SELECT id, name FROM cash_desk WHERE id = ? LIMIT 1`, id).Scan(
